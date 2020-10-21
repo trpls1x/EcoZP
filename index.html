@@ -7,24 +7,14 @@
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/style.css">
 	<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+	<link rel="icon" href="img/favicon.ico" type="image/x-icon">
 </head>
 <body>
-	<nav class="navbar sticky-top navbar-expand-sm navbar-light bg-light">  
-	    <p class="navbar-brand">EcoZP</p>
-	    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-	      <span class="navbar-toggler-icon"></span>
-	    </button>
-	    <div class="collapse navbar-collapse" id="navbarText">
-	      <ul class="navbar-nav ml-auto">
-	        <li class="nav-item">
-	          <a class="nav-link" href="#">Графіки</a>
-	        </li>
-	        <li class="nav-item">
-	          <a class="nav-link" href="#">Інфо</a>
-	        </li>
-	      </ul>
-	    </div>
-	</nav>	
+	<nav>
+		
+	    <p class="logo">EcoZP</p>
+	</nav>
+	    
 	<section class="container">
 		<div class="row">
 			<div class="col- 12 col-sm-6">Завантажте файли для опрацювання 
@@ -57,26 +47,35 @@
 				<input type="text" class="form-control" placeholder="Date">
 			</div>
 			
-			<div class="graphWrap col-12">
-				<div id="gr1" class="graph">Комплексне ІЗА</div>
-				<div id="gr2" class="graph">Завислі речовини</div>
-				<div id="gr3" class="graph">Діоксид сірки</div>
-				<div id="gr4" class="graph">Оксид вуглецю</div>
-				<div id="gr5" class="graph">Діоксид азоту</div>
-				<div id="gr6" class="graph">Оксид азоту</div>
-				<div id="gr7" class="graph">Фенол</div>
-				<div id="gr8" class="graph">Фтористий водень</div>
-				<div id="gr9" class="graph">Хлористий водень</div>
-				<div id="gr10" class="graph">Формальдегід</div>
-			</div>
+			<div id="gr1" class="graph">Комплексне ІЗА</div>
+			<div id="gr2" class="graph">Завислі речовини</div>
+			<div id="gr3" class="graph">Діоксид сірки</div>
+			<div id="gr4" class="graph">Оксид вуглецю</div>
+			<div id="gr5" class="graph">Діоксид азоту</div>
+			<div id="gr6" class="graph">Оксид азоту</div>
+			<div id="gr7" class="graph">Фенол</div>
+			<div id="gr8" class="graph">Фтористий водень</div>
+			<div id="gr9" class="graph">Хлористий водень</div>
+			<div id="gr10" class="graph">Формальдегід</div>
 
 			<hr>
+
+			<footer class="row">
+				<div class="col-12 col-lg-2 d-flex justify-content-center align-items-center"><img src="img/logo.png" alt="logo"></div>
+				<div class="col-12 col-lg-5">
+					<p>ІЗА - індекс забруднення атмосфери</p>
+					<p>Дані взяті з офіційного сайту Міністерства захисту довкілля та природних ресурсів України</p>
+				</div>
+				<div class="col-12 col-lg-5">
+					<p>© 2020 Бойко Олександр Олександрович</p>
+					<p>Розробник - <a href="http://trpls1x.github.io" target="_blank">Boyko</a></p>
+				</div>
+			</footer>
 		</div>
 	</section>
 
     
   	<script  src="js/jquery-3.5.1.min.js"></script>
-  	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   	<script src="js/bootstrap.min.js"></script>
   	<script type="text/javascript">
 		$(document).ready(function () {
