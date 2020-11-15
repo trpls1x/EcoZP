@@ -10,9 +10,11 @@
                     <a target="_blank" href="https://mepr.gov.ua/news/34713.html"><i class="far fa-question-circle" data-toggle="tooltip" title="Ви можете їх взяти тут"></i></a>
                 </div>
                 <div class="col-12 col-sm-6">
-                    <input name="myFile" type="file">
+                    <input type="file" accept="application/json" @change="onFileChange">
                 </div>
+                
                 <hr>
+                
                 <div class="col-12 col-lg-6">
                     <select id="select" class="form-control" v-model="chartName">
                         <option value="" disabled>Графіки</option>
@@ -35,8 +37,18 @@
                 <div class="col-12 col-sm-6 col-lg-3">
                     <input type="text" class="form-control" placeholder="Date">
                 </div>
-                
-                <div class="chart">{{chartName}}</div>
+                <button @click="check">check</button>
+                <table border="">
+                    <tr>
+                        <th>data</th>
+                    </tr>
+                    <tr v-for="item in days" :key="item.id">
+                        <td>{{item.Date}}</td>
+                    </tr>
+                </table>
+                <div class="chart">
+                    <!-- {{chartName}} -->
+                </div>
 
                 <hr>
             </div>
@@ -64,10 +76,28 @@
     export default {
         data: function() {
             return {
-                    chartName:'Комплексне ІЗА'
+                chartName:'Комплексне ІЗА',
+                days: [],
             };
         },
-
+        methods: {
+            check() {
+                console.log(this.days)
+            },
+            onFileChange(e) {
+                
+                let files = e.target.files || e.dataTransfer.files;
+                if (!files.length) return;
+                var reader = new FileReader();
+                reader.addEventListener('load', function() {
+                    var result = JSON.parse(reader.result);
+                    this.days = result;
+                    console.log("1",this.days);
+                });
+                reader.readAsText(files[0]);
+                console.log("2",this.days)
+            }
+        }
     }
 </script>
 
