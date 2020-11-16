@@ -72,6 +72,7 @@
 
 <script>
     import Vue from 'vue'
+    import days from '../data.json'
 
     export default {
         data: function() {
@@ -80,16 +81,21 @@
                 days: [],
             };
         },
+        mounted() {
+            //this.days = days;
+             // console.log(this.days)
+        },
         methods: {
             check() {
                 console.log(this.days)
             },
-            onFileChange(e) {
-                
+            async onFileChange(e) {
+                console.log("1",this);
                 let files = e.target.files || e.dataTransfer.files;
                 if (!files.length) return;
                 var reader = new FileReader();
-                reader.addEventListener('load', function() {
+                await reader.addEventListener('load', () => {
+                    console.log("2",this);
                     var result = JSON.parse(reader.result);
                     this.days = result;
                     console.log("1",this.days);
