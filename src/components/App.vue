@@ -38,7 +38,8 @@
                     <input type="text" class="form-control" placeholder="Date">
                 </div>
                 <button @click="check">check</button>
-                <table border="">
+               
+                <table border="" v-if="days.length != 0">
                     <tr>
                         <th>data</th>
                     </tr>
@@ -94,13 +95,13 @@
                 let files = e.target.files || e.dataTransfer.files;
                 if (!files.length) return;
                 var reader = new FileReader();
-                await reader.addEventListener('load', () => {
-                    console.log("2",this);
-                    var result = JSON.parse(reader.result);
-                    this.days = result;
-                    console.log("1",this.days);
-                });
-                reader.readAsText(files[0]);
+                const result = await new Promise((resolve, reject) => {
+                    reader.onload = () => {
+                        resolve(reader.result)
+                    }
+                   reader.readAsText(files[0]);
+                })
+                this.days = JSON.parse(result);
                 console.log("2",this.days)
             }
         }
