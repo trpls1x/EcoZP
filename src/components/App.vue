@@ -10,7 +10,7 @@
                     <a target="_blank" href="https://mepr.gov.ua/news/34713.html"><i class="far fa-question-circle" data-toggle="tooltip" title="Ви можете їх взяти тут"></i></a>
                 </div>
                 <div class="col-12 col-sm-6">
-                    <input type="file" accept="application/json" @change="onFileChange">
+                    <input type="file" accept="application/json" @change="onFileChange" >
                 </div>
                 
                 <hr>
@@ -81,19 +81,9 @@
             };
         },
         mounted() {
-            this.days = days,
-            days.forEach(element => {
-                Object.keys(element).forEach(function(key) {
-                    element[key] = element[key].toString().replace(/,/g, '.')
-                });
-                element.KIZA = this.calculateKIZA(element);
-            });
-            
-            let Dates = this.days.map((day) => {
-                return day.Date
-            })
-            this.dateLabels = [...new Set(Dates)]
-
+            this.days = days;
+            this.convertToDot(this.days);
+            this.fillDates();
             this.fillData(this.chartName)
         },
         methods: {
@@ -101,7 +91,6 @@
                 let chartData = this.days.map((day) => {
                     return day[property]
                 })
-                console.log(chartData)
 
                 var maxData
                 if(property == "KIZA")
@@ -113,7 +102,7 @@
                     labels: this.dateLabels,
                     datasets: [
                         {
-                            label: 'data',
+                            label: property,
                             data: chartData,
                             backgroundColor: "transparent",
                             borderColor: "#05CBE1",
@@ -137,11 +126,16 @@
                 let files = e.target.files || e.dataTransfer.files;
                 if (!files.length) return;
                 var reader = new FileReader();
-                await reader.addEventListener('load', () => {
-                    var result = JSON.parse(reader.result);
-                    this.days = result;
-                });
-                reader.readAsText(files[0]);
+                const result = await new Promise((resolve, reject) => {
+                    reader.onload = () => {
+                        resolve(reader.result)
+                    }
+                   reader.readAsText(files[0]);
+                })
+                this.days = JSON.parse(result);
+                this.convertToDot(this.days);
+                this.fillDates();
+                this.fillData(this.chartName)
             },
             calculateKIZA(element) {
                 return  Math.pow(element.dust, dangerClass[2].coefficient) + 
@@ -153,6 +147,20 @@
                         Math.pow(element.HF, dangerClass[0].coefficient) + 
                         Math.pow(element.HCl, dangerClass[2].coefficient) + 
                         Math.pow(element.CH2O, dangerClass[1].coefficient);
+            },
+            convertToDot(array) {
+                array.forEach(element => {
+                    Object.keys(element).forEach(function(key) {
+                        element[key] = element[key].toString().replace(/,/g, '.')
+                    });
+                    element.KIZA = this.calculateKIZA(element);
+                });
+            },
+            fillDates() {
+                let Dates = this.days.map((day) => {
+                    return day.Date
+                })
+                this.dateLabels = [...new Set(Dates)]
             }
         }
     }
