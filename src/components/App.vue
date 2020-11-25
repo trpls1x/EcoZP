@@ -10,45 +10,36 @@
                     <a target="_blank" href="https://mepr.gov.ua/news/34713.html"><i class="far fa-question-circle" data-toggle="tooltip" title="Ви можете їх взяти тут"></i></a>
                 </div>
                 <div class="col-12 col-sm-6">
-                    <input type="file" accept="application/json" @change="onFileChange">
+                    <input type="file" accept="application/json" @change="onFileChange" >
                 </div>
                 
                 <hr>
                 
                 <div class="col-12 col-lg-6">
-                    <select id="select" class="form-control" v-model="chartName">
+                    <select id="select" class="form-control" v-model="chartName" @change="fillData(chartName)">
                         <option value="" disabled>Графіки</option>
-                        <option value="Комплексне ІЗА" selected>Комплексне ІЗА</option>
-                        <option value="Завислі речовини">Завислі речовини</option>
-                        <option value="Діоксид сірки">Діоксид сірки</option>
-                        <option value="Оксид вуглецю">Оксид вуглецю</option>
-                        <option value="Діоксид азоту">Діоксид азоту</option>
-                        <option value="Оксид азоту">Оксид азоту</option>
-                        <option value="Фенол">Фенол</option>
-                        <option value="Фтористий водень">Фтористий водень</option>
-                        <option value="Хлористий водень">Хлористий водень</option>
-                        <option value="Формальдегід">Формальдегід</option>
+                        <option value="KIZA" selected>Комплексне ІЗА</option>
+                        <option value="dust">Завислі речовини</option>
+                        <option value="SO2">Діоксид сірки</option>
+                        <option value="CO">Оксид вуглецю</option>
+                        <option value="NO2">Діоксид азоту</option>
+                        <option value="NO">Оксид азоту</option>
+                        <option value="C5H5OH">Фенол</option>
+                        <option value="HF">Фтористий водень</option>
+                        <option value="HCl">Хлористий водень</option>
+                        <option value="CH2O">Формальдегід</option>
                     </select>
                 </div>	
 
                 <div class="col-12 col-sm-6 col-lg-3">
-                    <input type="text" class="form-control" placeholder="Date">
+                    <input type="date" class="form-control" placeholder="Date" v-model="dateFrom">
+                    <!-- <datetime v-model="date"></datetime> -->
                 </div>
                 <div class="col-12 col-sm-6 col-lg-3">
-                    <input type="text" class="form-control" placeholder="Date">
+                    <input type="date" class="form-control" placeholder="Date" v-model="dateTo" @change="buildByDates()">
                 </div>
-                <button @click="check">check</button>
-               
-                <table border="" v-if="days.length != 0">
-                    <tr>
-                        <th>data</th>
-                    </tr>
-                    <tr v-for="item in days" :key="item.id">
-                        <td>{{item.Date}}</td>
-                    </tr>
-                </table>
                 <div class="chart">
-                    <!-- {{chartName}} -->
+                    <line-chart :chart-data="datacollection"></line-chart>
                 </div>
 
                 <hr>
@@ -74,24 +65,76 @@
 <script>
     import Vue from 'vue'
     import days from '../data.json'
+    import dangerClass from '../dangerClass.json'
+    import LineChart from '../LineChart.js'
+    import VueMoment from 'vue-moment'
+    import moment from 'moment-timezone'
+    
+    Vue.use(VueMoment, {
+        moment,
+    })
+    import { Datetime } from 'vue-datetime'
+    import 'vue-datetime/dist/vue-datetime.css'
 
     export default {
-        data: function() {
+        components: {
+            LineChart,
+            datetime: Datetime
+        },
+        data() {
             return {
-                chartName:'Комплексне ІЗА',
+                chartName: "KIZA",
                 days: [],
+                dangerClass: [],
+                datacollection: null,
+                dateLabels: [],
+                dateFrom: '',
+                dateTo: ''
             };
         },
         mounted() {
-            //this.days = days;
-             // console.log(this.days)
+            this.days = days;
+            this.convertToDot(this.days);
+            this.fillDates();
+            this.fillData(this.chartName)
         },
         methods: {
-            check() {
-                console.log(this.days)
+            fillData(property) {
+                let chartData = this.days.map((day) => {
+                    return day[property]
+                })
+
+                var maxData
+                if(property == "KIZA")
+                    maxData = Array(this.days.length).fill(9);
+                else
+                    maxData = Array(this.days.length).fill(1);
+
+                this.datacollection = {
+                    labels: this.dateLabels,
+                    datasets: [
+                        {
+                            label: property,
+                            data: chartData,
+                            backgroundColor: "transparent",
+                            borderColor: "#05CBE1",
+                            pointBackgroundColor: "white",
+                            borderWidth: 1.2,
+                        }, 
+                        {
+                            label: 'max',
+                            data: maxData,
+                            backgroundColor: "transparent",
+                            borderColor: "#FC2525",
+                            pointRadius: 0,
+                            borderWidth: 3,
+                        }
+                    ],
+                    
+                }
+                
             },
             async onFileChange(e) {
-                console.log("1",this);
                 let files = e.target.files || e.dataTransfer.files;
                 if (!files.length) return;
                 var reader = new FileReader();
@@ -102,7 +145,46 @@
                    reader.readAsText(files[0]);
                 })
                 this.days = JSON.parse(result);
-                console.log("2",this.days)
+                this.convertToDot(this.days);
+                this.fillDates();
+                this.fillData(this.chartName)
+            },
+            calculateKIZA(element) {
+                return  Math.pow(element.dust, dangerClass[2].coefficient) + 
+                        Math.pow(element.SO2, dangerClass[2].coefficient) + 
+                        Math.pow(element.CO, dangerClass[3].coefficient) + 
+                        Math.pow(element.NO2, dangerClass[1].coefficient) + 
+                        Math.pow(element.NO, dangerClass[2].coefficient) + 
+                        Math.pow(element.C5H5OH, dangerClass[3].coefficient) + 
+                        Math.pow(element.HF, dangerClass[0].coefficient) + 
+                        Math.pow(element.HCl, dangerClass[2].coefficient) + 
+                        Math.pow(element.CH2O, dangerClass[1].coefficient);
+            },
+            convertToDot(array) {
+                array.forEach(element => {
+                    Object.keys(element).forEach(function(key) {
+                        element[key] = element[key].toString().replace(/,/g, '.')
+                    });
+                    element.KIZA = this.calculateKIZA(element);
+                });
+            },
+            fillDates() {
+                let Dates = this.days.map((day) => {
+                    return day.Date
+                })
+                this.dateLabels = [...new Set(Dates)]
+            },
+            buildByDates() {
+                let dFrom = this.$moment(this.dateFrom).unix();
+                let dTo = this.$moment(this.dateTo).unix();
+                if (this.dateFrom != '') {
+                    this.days = this.days.filter((day) => {
+                        let d = this.$moment(day.Date,'DD.MM.YYYY').unix();
+                        return ((Number(d)>Number(dFrom)) && (Number(d)<Number(dTo)));
+                    })
+                    this.fillDates();
+                    this.fillData(this.chartName)
+                }
             }
         }
     }
@@ -148,6 +230,11 @@
         display: flex;
         justify-content: center;
         align-items: center;
+    }
+
+    .chart * {
+        width: 100%;
+        height: 100%;
     }
 
     footer {
