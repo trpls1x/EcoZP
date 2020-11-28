@@ -180,7 +180,7 @@
                 if (this.dateFrom != '') {
                     this.days = this.days.filter((day) => {
                         let d = this.$moment(day.Date,'DD.MM.YYYY').unix();
-                        return ((Number(d)>Number(dFrom)) && (Number(d)<Number(dTo)));
+                        return ((+Number(d)>=+Number(dFrom)) && (+Number(d)<=+Number(dTo)));
                     })
                     this.fillDates();
                     this.fillData(this.chartName)
