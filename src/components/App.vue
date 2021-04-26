@@ -1,7 +1,8 @@
 <template>
     <div class="wrap">
         <nav>
-            <p class="logo">EcoZP</p>
+            <div class="container"><p class="logo">EcoZP</p></div>
+            
         </nav>
             
         <section class="container">
@@ -32,8 +33,7 @@
                 </div>	
 
                 <div class="col-12 col-sm-6 col-lg-3">
-                    <input type="date" class="form-control" placeholder="Date" v-model="dateFrom">
-                    <!-- <datetime v-model="date"></datetime> -->
+                    <input type="date" class="form-control" placeholder="Date" v-model="dateFrom" @change="onlyday">
                 </div>
                 <div class="col-12 col-sm-6 col-lg-3">
                     <input type="date" class="form-control" placeholder="Date" v-model="dateTo" @change="buildByDates()">
@@ -47,7 +47,7 @@
         </section>
         <footer class="container">
             <div class="row">
-                <div class="col-12 col-lg-2 d-flex justify-content-center align-items-center"><img src="logo.png" alt="logo"></div>
+                <div class="col-12 col-lg-2 d-flex justify-content-center align-items-center"><img src="/images/logo.png" alt="logo"></div>
                 <div class="col-12 col-lg-5">
                     <p>ІЗА - індекс забруднення атмосфери</p>
                     <p>Дані взяті з офіційного сайту Міністерства захисту довкілля та природних ресурсів України</p>
@@ -64,8 +64,8 @@
 
 <script>
     import Vue from 'vue'
-    import days from '../data.json'
-    import dangerClass from '../dangerClass.json'
+    // import days from '../data.json'
+    import dangerClass from '../data/dangerClass.json'
     import LineChart from '../LineChart.js'
     import VueMoment from 'vue-moment'
     import moment from 'moment-timezone'
@@ -93,12 +93,16 @@
             };
         },
         mounted() {
-            this.days = days;
-            this.convertToDot(this.days);
-            this.fillDates();
-            this.fillData(this.chartName)
+            // this.days = days;
+            // this.convertToDot(this.days);
+            // this.fillDates();
+            // this.fillData(this.chartName)
         },
         methods: {
+            onlyday() {
+                var dayy = this.dateFrom.slice(8)
+                console.log(dayy)
+            },
             fillData(property) {
                 let chartData = this.days.map((day) => {
                     return day[property]
