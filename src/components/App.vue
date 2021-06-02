@@ -7,16 +7,24 @@
             
         <section class="container">
             <div class="row">
-                <div class="col- 12 col-sm-6">Завантажте файли для опрацювання 
+
+                <div class="">
+                </div>  
+                <div class="col-12 col-sm-6">Завантажте файли для опрацювання 
                     <a target="_blank" href="https://mepr.gov.ua/news/34713.html"><i class="far fa-question-circle" data-toggle="tooltip" title="Ви можете їх взяти тут"></i></a>
                 </div>
                 <div class="col-12 col-sm-6">
                     <input type="file" accept="application/json" @change="onFileChange" >
                 </div>
+                <div class="col-12 col-sm-6">
+                    <input type="url" v-model="url">
+                    <button @click="onButtonClick">button</button>
+                    <button @click="onButtonClick2">test</button>
+                </div>
                 
                 <hr>
                 
-                <div class="col-12 col-lg-6">
+                <div class="col-12 col-lg-6 ">
                     <select id="select" class="form-control" v-model="chartName" @change="fillData(chartName)">
                         <option value="" disabled>Графіки</option>
                         <option value="KIZA" selected>Комплексне ІЗА</option>
@@ -39,9 +47,8 @@
                     <input type="date" class="form-control" placeholder="Date" v-model="dateTo" @change="buildByDates()">
                 </div>
                 <div class="chart">
-                    <line-chart :chart-data="datacollection"></line-chart>
+                    <line-chart :chart-data="datacollection" :options="chartOptions"></line-chart>
                 </div>
-
                 <hr>
             </div>
         </section>
@@ -64,6 +71,7 @@
 
 <script>
     import Vue from 'vue'
+    import $ from 'jquery';
     // import days from '../data.json'
     import dangerClass from '../data/dangerClass.json'
     import LineChart from '../LineChart.js'
@@ -84,12 +92,14 @@
         data() {
             return {
                 chartName: "KIZA",
+                url: "",
                 days: [],
                 dangerClass: [],
-                datacollection: null,
                 dateLabels: [],
                 dateFrom: '',
-                dateTo: ''
+                dateTo: '',
+                datacollection: null,
+                chartOptions: null
             };
         },
         mounted() {
@@ -97,6 +107,10 @@
             // this.convertToDot(this.days);
             // this.fillDates();
             // this.fillData(this.chartName)
+            let chartOptions = {
+                maintainAspectRatio: false,
+                responsive: true
+            }
         },
         methods: {
             onlyday() {
@@ -108,7 +122,7 @@
                     return day[property]
                 })
 
-                var maxData
+                var maxData;
                 if(property == "KIZA")
                     maxData = Array(this.days.length).fill(9);
                 else
@@ -134,9 +148,7 @@
                             borderWidth: 3,
                         }
                     ],
-                    
                 }
-                
             },
             async onFileChange(e) {
                 let files = e.target.files || e.dataTransfer.files;
@@ -152,6 +164,16 @@
                 this.convertToDot(this.days);
                 this.fillDates();
                 this.fillData(this.chartName)
+            },
+            onButtonClick(){
+                this.days = $.getJSON(this.url, function(data) {
+                    console.log(data);
+                    return data
+                });
+                
+            },
+            onButtonClick2(){
+                console.log(this.days)
             },
             calculateKIZA(element) {
                 return  Math.pow(element.dust, dangerClass[2].coefficient) + 
@@ -235,10 +257,9 @@
         justify-content: center;
         align-items: center;
     }
-
     .chart * {
         width: 100%;
-        height: 100%;
+        height: 60vh;
     }
 
     footer {
