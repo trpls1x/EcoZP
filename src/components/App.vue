@@ -100,6 +100,7 @@
             return {
                 chartName: "KIZA",
                 url: "",
+                initialData: [],
                 days: [],
                 dangerClass: [],
                 dateLabels: [],
@@ -171,8 +172,12 @@
                     }
                    reader.readAsText(files[0]);
                 })
-                this.days = JSON.parse(result);
-                this.convertToDot(this.days);
+
+                this.initialData = JSON.parse(result);
+                this.convertToDot(this.initialData);
+
+                this.days = this.initialData;
+
                 this.fillDates();
                 this.fillData(this.chartName)
             },
@@ -208,18 +213,20 @@
                 this.chartWidth = this.days.length * 5;
             },
             buildByDates() {
-                let dFrom = this.$moment(this.dateFrom).unix();
-                let dTo = this.$moment(this.dateTo).unix();
-                // if (this.dateFrom != '') {
-                    this.days = this.days.filter((day) => {
-                        let d = this.$moment(day.Date,'DD.MM.YYYY').unix();
-                        return ((+Number(d)>=+Number(dFrom)) && (+Number(d)<=+Number(dTo)));
-                    })
-                    this.fillDates();
-                    this.fillData(this.chartName);
-                // }
-                console.log(this.dateFrom);
-                console.log(this.dateTo);
+                if (this.dateFrom && this.dateTo) {
+                    console.log('tut')
+                    let dFrom = this.$moment(this.dateFrom).unix();
+                    let dTo = this.$moment(this.dateTo).unix();
+                        this.days = this.initialData.filter((day) => {
+                            let d = this.$moment(day.Date,'DD.MM.YYYY').unix();
+                            return ((+Number(d)>=+Number(dFrom)) && (+Number(d)<=+Number(dTo)));
+                        })
+                } else {
+                    this.days = this.initialData
+                }
+
+                this.fillDates();
+                this.fillData(this.chartName);
             },
             countExcessDays(prop, max) {
                 this.excessDays = 0;
@@ -231,6 +238,7 @@
             clearFilters() {
                 this.dateFrom = '';
                 this.dateTo = '';
+                this.buildByDates();
             }
         }
     }
