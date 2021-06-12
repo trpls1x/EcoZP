@@ -44,7 +44,7 @@
                     <button type="button" class="btn btn-outline-secondary" @click="clearFilters"><svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="calendar-times" class="svg-inline--fa fa-calendar-times fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M311.7 374.7l-17 17c-4.7 4.7-12.3 4.7-17 0L224 337.9l-53.7 53.7c-4.7 4.7-12.3 4.7-17 0l-17-17c-4.7-4.7-4.7-12.3 0-17l53.7-53.7-53.7-53.7c-4.7-4.7-4.7-12.3 0-17l17-17c4.7-4.7 12.3-4.7 17 0l53.7 53.7 53.7-53.7c4.7-4.7 12.3-4.7 17 0l17 17c4.7 4.7 4.7 12.3 0 17L257.9 304l53.7 53.7c4.8 4.7 4.8 12.3.1 17zM448 112v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"></path></svg></button>
                 </div>
                 <div class="chart-wrap col-12 order-5">
-                    <div class="chart" :style="{ width: chartWidth + 'vw' }">
+                    <div class="chart" :style="{ width: chartWidth + '%' }">
                         <line-chart :chart-data="datacollection" :options="chartOptions"></line-chart>
                     </div>
                 </div>
@@ -68,10 +68,10 @@
                     <p>Дані взяті з офіційного сайту Міністерства захисту довкілля та природних ресурсів України</p>
                 </div>
                 <div class="col-12 col-lg-5">
-                    <p>Актуальні дані можна отримати <a target="_blank" href="https://drive.google.com/uc?export=download&id=1tGS9m3OE73TQaCFIlgKgjc6C6zW3i2y9">тут</a></p>
+                    <p>Актуальні дані можна отримати <a target="_blank" href="https://drive.google.com/uc?export=download&id=1r_15H3gI8Hdb87wtZhsE6cqkuYsRo3Z0">тут</a></p>
                     <p>Розробник - <a target="_blank" href="http://trpls1x.github.io">Boyko</a></p>
                 </div>
-                <div class="col-12 col-lg-1 d-flex justify-content-center align-items-center"><img src="/images/logo.png" alt="logo"></div>
+                <div class="col-12 col-lg-1 d-flex justify-content-center align-items-center"><img src="images/logo.png" alt="logo"></div>
             </div>
         </footer>
 
@@ -181,11 +181,6 @@
                 this.fillDates();
                 this.fillData(this.chartName)
             },
-            onButtonClick(){
-            },
-            gotData(data) {
-                console.log(data);
-            },
             calculateKIZA(element) {
                 return  Math.pow(element.dust, dangerClass[2].coefficient) + 
                         Math.pow(element.SO2, dangerClass[2].coefficient) + 
@@ -214,7 +209,6 @@
             },
             buildByDates() {
                 if (this.dateFrom && this.dateTo) {
-                    console.log('tut')
                     let dFrom = this.$moment(this.dateFrom).unix();
                     let dTo = this.$moment(this.dateTo).unix();
                         this.days = this.initialData.filter((day) => {
@@ -311,7 +305,7 @@
 
     .chart {
         position: relative;
-        min-width: 100vw;
+        min-width: 100%;
         height: 70vh;
     }
 
